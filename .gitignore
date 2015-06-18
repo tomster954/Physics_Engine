@@ -1,0 +1,14 @@
+*.suo
+*.pdb
+Pool Game/OpenGL.sdf
+*.user
+*.obj
+*.log
+Pool Game/OpenGL/Release/OpenGL.tlog/CL.read.1.tlog
+Pool Game/OpenGL/Release/OpenGL.tlog/CL.write.1.tlog
+Pool Game/OpenGL/Release/OpenGL.tlog/OpenGL.lastbuildstate
+Pool Game/OpenGL/Release/OpenGL.tlog/cl.command.1.tlog
+Pool Game/OpenGL/Release/OpenGL.tlog/link.command.1.tlog
+Pool Game/OpenGL/Release/OpenGL.tlog/link.read.1.tlog
+Pool Game/OpenGL/Release/OpenGL.tlog/link.write.1.tlog
+*.unsuccessfulbuild
