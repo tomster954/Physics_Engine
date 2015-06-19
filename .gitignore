@@ -12,3 +12,6 @@ Pool Game/OpenGL/Release/OpenGL.tlog/link.command.1.tlog
 Pool Game/OpenGL/Release/OpenGL.tlog/link.read.1.tlog
 Pool Game/OpenGL/Release/OpenGL.tlog/link.write.1.tlog
 *.unsuccessfulbuild
+*.tlog
+*.lastbuildstate
+*.idb
