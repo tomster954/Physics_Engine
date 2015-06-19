@@ -14,7 +14,7 @@ Application::Application(glm::vec4 _backgroundColour)
 
 	m_camera = new Camera(3.14159f * 0.25f, 4.0f / 3.0f, 0.01f, 100);
 	m_camera->setSpeed(100);
-	m_camera->setLookAtFrom(glm::vec3(0, 10, -100), glm::vec3(0, 0, 0));
+	m_camera->setLookAtFrom(glm::vec3(0, 300, -1), glm::vec3(0, 0, 0));
 
 	if (m_pWindow == nullptr) 
 	{
@@ -72,7 +72,7 @@ void Application::Update()
 	m_lastTime		= m_currentTime;
 
 	m_camera->update(m_deltaTime);
-	m_playState->Update();
+	m_playState->Update(m_deltaTime);
 }
 
 void Application::Draw()

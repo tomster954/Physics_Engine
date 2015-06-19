@@ -16,15 +16,18 @@ class PlayState
 public:
 	PlayState(GLFWwindow *_pWindow);
 	~PlayState();
-	void Update();
+	void Update(float _dt);
 	void Draw(Camera *_camera);
 	void ResetGame();
 
+	void BallCollision();
+
 private:
 	GLFWwindow *m_pWindow;
-	glm::mat4 *m_project;
+	glm::mat4 m_project;
 
-	Ball *m_ball;
+	Ball m_ball1;
+	Ball m_ball2;
 };
 
 #endif
