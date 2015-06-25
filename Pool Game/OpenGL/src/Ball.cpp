@@ -22,7 +22,6 @@ Ball::~Ball()
 void Ball::Update(float _dt)
 {
 	//slows ball over time.
-
 	for (int i = 0; i < 3; i++)
 	{
 		if (m_velocity[i] > 0.5)

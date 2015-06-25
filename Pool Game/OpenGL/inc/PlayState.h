@@ -9,6 +9,12 @@
 #include "Camera.h"
 #include "Ball.h"
 
+#include <string>
+#include <iterator>
+#include <iostream>
+#include <algorithm>
+#include <array>
+
 struct GLFWwindow;
 
 class PlayState
@@ -20,7 +26,7 @@ public:
 	void Draw(Camera *_camera);
 	void ResetGame();
 
-	void BallCollision();
+	void BallCollision(Ball *_ball1, Ball *_ball2);
 
 private:
 	GLFWwindow *m_pWindow;
@@ -28,6 +34,8 @@ private:
 
 	Ball m_ball1;
 	Ball m_ball2;
+
+	std::array<Ball, 16> m_ballArray;
 };
 
 #endif
