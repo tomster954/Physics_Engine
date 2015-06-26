@@ -8,6 +8,7 @@
 #include "Networking.h"
 #include "Camera.h"
 #include "Ball.h"
+#include "Table.h"
 
 #include <string>
 #include <iterator>
@@ -32,8 +33,7 @@ private:
 	GLFWwindow *m_pWindow;
 	glm::mat4 m_project;
 
-	Ball m_ball1;
-	Ball m_ball2;
+	Table m_table;
 
 	std::array<Ball, 16> m_ballArray;
 };
