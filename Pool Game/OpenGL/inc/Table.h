@@ -24,7 +24,7 @@ private:
 	glm::mat4 m_transform;
 	Box m_floor;
 
-	std::array<Box, 4> m_tableBarriers;
+	std::array<Box, 6> m_tableBarriers;
 };
 
 #endif

@@ -12,11 +12,34 @@ Table::Table() :
 	m_floor.SetSize(glm::vec3(400, 1, 200));
 	m_floor.SetMass(1000000);
 
-	m_tableBarriers[0].SetSize(glm::vec3(400, 10, 10));
-	//m_tableBarriers[1].SetSize(glm::vec3(400, 10, 10));
+	//TopSide
+	//---------------------------------
+	m_tableBarriers[0].SetSize(glm::vec3(175, 10, 10));
+	m_tableBarriers[1].SetSize(glm::vec3(175, 10, 10));
+	m_tableBarriers[0].SetPosition(glm::vec3(200, 10, 200));
+	m_tableBarriers[1].SetPosition(glm::vec3(-200, 10, 200));
+	//---------------------------------
 
-	m_tableBarriers[0].SetPosition(glm::vec3(0, 0, 200));
-	//m_tableBarriers[1].SetPosition(glm::vec3(400, 10, 10));
+	//BotSide
+	//---------------------------------
+	m_tableBarriers[2].SetSize(glm::vec3(175, 10, 10));
+	m_tableBarriers[3].SetSize(glm::vec3(175, 10, 10));
+	m_tableBarriers[2].SetPosition(glm::vec3(200, 10, -200));
+	m_tableBarriers[3].SetPosition(glm::vec3(-200, 10,-200));
+	//---------------------------------
+
+	//Left Side
+	//---------------------------------
+	m_tableBarriers[4].SetSize(glm::vec3(10, 10, 175));
+	m_tableBarriers[4].SetPosition(glm::vec3(400, 10, 0));
+	//---------------------------------
+
+	//right Side
+	//---------------------------------
+	m_tableBarriers[5].SetSize(glm::vec3(10, 10, 175));
+	m_tableBarriers[5].SetPosition(glm::vec3(-400, 10, 0));
+	//---------------------------------
+
 }
 
 Table::~Table()
