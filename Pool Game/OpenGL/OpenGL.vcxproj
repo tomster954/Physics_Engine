@@ -89,6 +89,7 @@
     <ClCompile Include="src\Ball.cpp" />
     <ClCompile Include="src\Box.cpp" />
     <ClCompile Include="src\Networking.cpp" />
+    <ClCompile Include="src\Plane.cpp" />
     <ClCompile Include="src\PlayState.cpp" />
     <ClCompile Include="src\Camera.cpp" />
     <ClCompile Include="src\gl_core_4_4.c" />
@@ -106,6 +107,7 @@
     <ClInclude Include="inc\gl_core_4_4.h" />
     <ClInclude Include="inc\GUI_Bar.h" />
     <ClInclude Include="inc\Networking.h" />
+    <ClInclude Include="inc\Plane.h" />
     <ClInclude Include="inc\PlayState.h" />
     <ClInclude Include="inc\Table.h" />
   </ItemGroup>

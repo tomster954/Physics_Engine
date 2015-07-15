@@ -1,6 +1,6 @@
 #include "Ball.h"
 #include "Gizmos.h"
-
+#include "glm/ext.hpp"
 Ball::Ball() : 
 	m_transform(1, 0, 0, 1,
 				0, 1, 0, 1,
@@ -9,7 +9,7 @@ Ball::Ball() :
 	m_velocity(0),
 	m_radius(10),
 	m_mass(100),
-	m_friction(20)
+	m_drag(20)
 {
 
 
@@ -21,19 +21,15 @@ Ball::~Ball()
 
 void Ball::Update(float _dt)
 {
-	//slows ball over time.
-	for (int i = 0; i < 3; i++)
-	{
-		if (m_velocity[i] > 0.5)
-			m_velocity[i] -= m_friction * _dt;
-		else if (m_velocity[i] < -0.5)
-			m_velocity[i] += m_friction * _dt;
-		else
-			m_velocity[i] = 0;
-	}
 
-	float speed = 10;
+	//Calculating drag
+	glm::vec3 normalVelocity(0);
+	if (m_velocity != glm::vec3(0))
+		normalVelocity = glm::normalize(m_velocity);
 
+	m_velocity -= normalVelocity * m_drag * _dt;
+
+	//Transforming the ball with the velocity
 	m_transform[3].xyz = glm::vec3(	m_transform[3].x + (m_velocity.x * _dt),
 									m_transform[3].y + (m_velocity.y * _dt),
 									m_transform[3].z + (m_velocity.z * _dt));

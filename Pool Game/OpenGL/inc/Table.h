@@ -7,6 +7,7 @@
 #define TABLE
 
 #include "Box.h"
+#include "Plane.h"
 #include "Camera.h"
 
 #include <array>
@@ -22,7 +23,7 @@ public:
 
 private:
 	glm::mat4 m_transform;
-	Box m_floor;
+	Plane m_floor;
 
 	std::array<Box, 6> m_tableBarriers;
 };

@@ -39,7 +39,7 @@ private:
 
 	float m_mass;
 	float m_radius;
-	float m_friction;
+	float m_drag;
 
 	glm::mat4 m_transform;
 	glm::vec3 m_velocity;
