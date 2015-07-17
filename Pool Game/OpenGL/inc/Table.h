@@ -20,6 +20,9 @@ public:
 
 	void Update(float _dt);
 	void Draw(Camera *_pCamera);
+	
+	std::array<Box, 6>* GetTableBorders(){ return &m_tableBarriers;  }
+	Plane GetTable(){ return m_floor; }
 
 private:
 	glm::mat4 m_transform;

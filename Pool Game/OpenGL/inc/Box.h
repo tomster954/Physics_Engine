@@ -23,6 +23,7 @@ public:
 									m_depth = _size.z; };
 	void SetMass(float _mass){ m_mass = _mass; }
 	void SetPosition(glm::vec3 _pos) { m_transform[3].xyz = _pos; }
+	void SetColour(glm::vec4 _colour) { m_colour = _colour; }
 private:
 	float m_mass;
 
@@ -33,7 +34,7 @@ private:
 	float m_friction;
 
 	
-
+	glm::vec4 m_colour;
 	glm::mat4 m_transform;
 	glm::vec3 m_velocity;
 

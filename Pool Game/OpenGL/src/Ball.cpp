@@ -21,6 +21,9 @@ Ball::~Ball()
 
 void Ball::Update(float _dt)
 {
+	glm::vec3 gravity = glm::vec3(0, 100, 0);
+
+	m_velocity -= gravity * m_mass * _dt;
 
 	//Calculating drag
 	glm::vec3 normalVelocity(0);

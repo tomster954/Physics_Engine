@@ -27,7 +27,10 @@ public:
 	void Draw(Camera *_camera);
 	void ResetGame();
 
-	void BallCollision(Ball *_ball1, Ball *_ball2);
+	void CollisionDetection(float _dt);
+
+	void BallBallCollision();
+	void BallPlaneCollision();
 
 private:
 	GLFWwindow *m_pWindow;
