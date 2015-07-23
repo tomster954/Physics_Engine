@@ -51,6 +51,9 @@ void PlayState::Draw(Camera *_camera)
 
 	m_planeFloor.Draw();
 
+	Gizmos::addTransform(glm::mat4(1), 20.0f);
+
+
 	Gizmos::draw(_camera->getProjectionView());
 }
 
@@ -62,49 +65,54 @@ void PlayState::ResetGame()
 		m_ballArray[i].SetVelocity(glm::vec3(0, 0, 0));
  		m_ballArray[i].SetMass(10);
 	}
+	
+
+	//m_ballArray[0].SetPosition(glm::vec3(200, 10, 0));
+	//m_ballArray[0].SetVelocity(glm::vec3(0, 0, 0));
+
 
 	for (unsigned int i = 0; i < m_walls.size(); i++)
 	{
 		m_walls[i].SetMass(100000);
 		m_walls[i].SetSize(glm::vec3(0, 100, 0));
 	}
-
-	//Positioning walls
+	//
+	////Positioning walls
 	//------------------------------------
-	
+	//
 	const int wallWidth = 30;
 	const int wallLength = 400;
 	const int wallHieght = 100;
 	m_walls[0].SetSize(glm::vec3(wallWidth, m_walls[0].GetSzie().y , wallLength));
 	m_walls[0].SetPosition(glm::vec3(wallLength/2, wallHieght/2, 0));
-
+	
 	m_walls[1].SetSize(glm::vec3(wallWidth, m_walls[0].GetSzie().y, wallLength));
 	m_walls[1].SetPosition(glm::vec3(-wallLength/2, wallHieght/2, 0));
-
+	
 	m_walls[2].SetSize(glm::vec3(wallLength, m_walls[0].GetSzie().y, wallWidth/2));
 	m_walls[2].SetPosition(glm::vec3(0, wallHieght/2, wallLength/2));
-
+	
 	m_walls[3].SetSize(glm::vec3(wallLength, m_walls[0].GetSzie().y, wallWidth));
 	m_walls[3].SetPosition(glm::vec3(0, wallHieght/2, -wallLength/2));
-	//------------------------------------
-
+	////------------------------------------
+	//
 	//white ball
 	m_ballArray[0].SetVelocity(glm::vec3(-300, 0, 0));
-	m_ballArray[0].SetPosition(glm::vec3(200, 10, 0));
+	m_ballArray[0].SetPosition(glm::vec3(150, 10, 0));
 	
-
+	
 	//placess all the pool balls
 	int ballNumber = 1;
 	int ballDiameter = 20;
 	for (int col = 1; col < 6; col++)
 	{
 		float x = (-ballDiameter + 2.5f) * col;
-
+	
 		for (int  i = 0; i < col; i++)
 		{
 			int z = (ballDiameter * col) / 2 - (ballDiameter / 2);
 			z += -ballDiameter * i;
-
+	
 			m_ballArray[ballNumber].SetPosition(glm::vec3(x - 100, 80, z));
 			ballNumber++;
 		}
@@ -199,16 +207,127 @@ void PlayState::BallAABBCollision()
 			float ballRadius = m_ballArray[itrBall].GetRadius();
 			
 			float halfWallWidth = m_walls[itrWall].GetExtents().x;
+			float halfWallHeight = m_walls[itrWall].GetExtents().y;
 			float halfWallLength = m_walls[itrWall].GetExtents().z;
 
-			float ballXDelta = std::abs(ballPos.x - wallPos.x);
-			float ballZDelta = std::abs(ballPos.z - wallPos.z);
+			glm::vec3 wallTopBackLeft = wallPos - glm::vec3(halfWallWidth, halfWallHeight, -halfWallLength);
+			glm::vec3 wallTopBackRight = wallPos - glm::vec3(-halfWallWidth, halfWallHeight, -halfWallLength);
+			glm::vec3 wallTopFrontLeft = wallPos - glm::vec3(halfWallWidth, halfWallHeight, halfWallLength);
+			glm::vec3 wallTopFrontRight = wallPos - glm::vec3(-halfWallWidth, halfWallHeight, halfWallLength);
 
-		
-			if (ballXDelta < ballRadius + halfWallWidth && ballZDelta < ballRadius + halfWallLength)
+			glm::vec3 wallBottomBackLeft = wallPos - glm::vec3(halfWallWidth, -halfWallHeight, -halfWallLength);
+			glm::vec3 wallBottomBackRight = wallPos - glm::vec3(-halfWallWidth, -halfWallHeight, -halfWallLength);
+			glm::vec3 wallBottomFrontLeft = wallPos - glm::vec3(halfWallWidth, -halfWallHeight, halfWallLength);
+			glm::vec3 wallBottomFrontRight = wallPos - glm::vec3(-halfWallWidth, -halfWallHeight, halfWallLength);
+
+
+			float	  fIntersectDist;
+			glm::vec3 collisionNormal;
+			float fXSmallestOverlap = 1000000;
+			float fYSmallestOverlap = 1000000;
+			float fZSmallestOverlap = 1000000;
+			float fSmallestOverLap = 1000000;
+
+			float fWallMinX = wallBottomFrontLeft.x;
+			float fWallMaxX = wallBottomFrontRight.x;
+
+			float fBallMinX = ballPos.x - ballRadius;
+			float fBallMaxX = ballPos.x + ballRadius;
+
+			if (fWallMaxX > fBallMinX && fBallMaxX > fWallMinX)
 			{
- 				m_ballArray[itrBall].SetColour(glm::vec4(1.0f, 0.5f, 0.5f, 1));
+				//Collided on X axis;
+				float fXOverlap1 = fWallMaxX - fBallMinX;
+				float fXOverLap2 = fWallMinX - fBallMaxX;
+				if (glm::abs(fXOverlap1) < glm::abs(fXOverLap2))
+				{
+					fXSmallestOverlap = fXOverlap1;
+				}
+				else
+				{
+					fXSmallestOverlap = fXOverLap2;
+				}
+				collisionNormal = glm::vec3(1, 0, 0);
+				fIntersectDist = fXSmallestOverlap;
+				fSmallestOverLap = fXSmallestOverlap;
 			}
+			else
+			{
+				continue;
+			}
+
+
+			float fWallMinY = wallTopFrontLeft.y;
+			float fWallMaxY = wallBottomBackRight.y;
+						  
+			float fBallMinY = ballPos.y - ballRadius;
+			float fBallMaxY = ballPos.y + ballRadius;
+
+			if (fWallMaxY > fBallMinY && fBallMaxY > fWallMinY)
+			{
+				//Collided on X axis;
+				float fYOverlap1 = fWallMaxY - fBallMinY;
+				float fYOverLap2 = fWallMinY - fBallMaxY;
+
+				if (glm::abs(fYOverlap1) < glm::abs(fYOverLap2))
+				{
+					fYSmallestOverlap = fYOverlap1;
+				}
+				else
+				{
+					fYSmallestOverlap = fYOverLap2;
+				}
+
+				if (glm::abs(fYSmallestOverlap) < glm::abs(fSmallestOverLap))
+				{
+					collisionNormal = glm::vec3(0, 1, 0);
+					fIntersectDist = fYSmallestOverlap;
+					fSmallestOverLap = fYSmallestOverlap;
+				}
+			}
+			else
+			{
+				continue;
+			}
+
+			float fWallMinZ = wallBottomFrontLeft.z;
+			float fWallMaxZ = wallBottomBackRight.z;
+
+			float fBallMinZ = ballPos.z - ballRadius;
+			float fBallMaxZ = ballPos.z + ballRadius;
+
+			if (fWallMaxZ > fBallMinZ && fBallMaxZ > fWallMinZ)
+			{
+				//Collided on X axis;
+				float fZOverlap1 = fWallMaxZ - fBallMinZ;
+				float fZOverLap2 = fWallMinZ - fBallMaxZ;
+
+				if (glm::abs(fZOverlap1) < glm::abs(fZOverLap2))
+				{
+					fZSmallestOverlap = fZOverlap1;
+				}
+				else
+				{
+					fZSmallestOverlap = fZOverLap2;
+				}
+
+				if (glm::abs(fZSmallestOverlap) < glm::abs(fSmallestOverLap))
+				{
+					collisionNormal = glm::vec3(0, 0, 1);
+					fIntersectDist = fZSmallestOverlap;
+					fSmallestOverLap = fZSmallestOverlap;
+				}
+			}
+			else
+			{
+				continue;
+			}
+
+			m_ballArray[itrBall].SetColour(glm::vec4(1.0f, 0.5f, 0.5f, 1));
+			m_ballArray[itrBall].SetPosition((m_ballArray[itrBall].GetTransform()[3].xyz + collisionNormal * fIntersectDist));
+
+			glm::vec3 forceVec = -1 * m_ballArray[itrBall].GetMass() * collisionNormal * (glm::dot(collisionNormal, m_ballArray[itrBall].GetVelocity()));
+			m_ballArray[itrBall].ApplyForce(forceVec + forceVec);
 		}
 	}
 }
