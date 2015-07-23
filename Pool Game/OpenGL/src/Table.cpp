@@ -9,9 +9,6 @@ Table::Table() :
 				0, 0, 1, 1,
 				0, 0, 0, 1)
 {
-	m_floor.SetSize(glm::vec2(400, 200));
-
-
 	//TopSide
 	//---------------------------------
 	m_tableBarriers[0].SetSize(glm::vec3(165, 10, 10));

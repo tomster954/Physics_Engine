@@ -14,7 +14,7 @@ Box::Box() :
 				0, 0, 0, 1),
 	m_velocity(0,0,0)
 {
-
+	
 }
 
 Box::~Box()
@@ -30,5 +30,7 @@ void Box::Update(float _dt)
 void Box::Draw(Camera *_pCamera)
 {
 	glm::vec3 pos = m_transform[3].xyz;
-	Gizmos::addAABBFilled(pos, glm::vec3(m_width, m_height, m_depth), m_colour, &m_transform);
+	glm::vec3 extents = GetExtents();
+
+	Gizmos::addAABBFilled(pos, glm::vec3(extents.x, extents.y, extents.z), m_colour, &m_transform);
 }

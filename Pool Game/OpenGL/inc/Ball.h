@@ -30,6 +30,7 @@ public:
 	void SetVelocity(glm::vec3 _velocity){ m_velocity = _velocity; }
 	void SetPosition(glm::vec3 _position){ m_transform[3].xyz = _position; }
 	void SetMass(float _mass){ m_mass = _mass; }
+	void SetColour(glm::vec4 _colour)  { m_colour = _colour; }
 
 	//Add
 	void ApplyForce(glm::vec3 _forceVector){ m_velocity += _forceVector / m_mass; }
@@ -43,5 +44,6 @@ private:
 
 	glm::mat4 m_transform;
 	glm::vec3 m_velocity;
+	glm::vec4 m_colour;
 };
 #endif

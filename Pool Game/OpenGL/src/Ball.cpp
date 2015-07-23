@@ -9,10 +9,9 @@ Ball::Ball() :
 	m_velocity(0),
 	m_radius(10),
 	m_mass(100),
-	m_drag(20)
+	m_drag(20),
+	m_colour(0.25, 1.0f, 1.0f, 1.0f)
 {
-
-
 }
 
 Ball::~Ball()
@@ -41,5 +40,5 @@ void Ball::Update(float _dt)
 void Ball::Draw(Camera *_pCamera)
 {
 	glm::vec3 pos = m_transform[3].xyz;
-	Gizmos::addSphere(pos, 10, 10, 10, glm::vec4(0.25, 1, 1, 1), &m_transform);
+	Gizmos::addSphere(pos, 10, 10, 10, m_colour);
 }

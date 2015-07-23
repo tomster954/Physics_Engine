@@ -31,13 +31,15 @@ public:
 
 	void BallBallCollision();
 	void BallPlaneCollision();
+	void BallAABBCollision();
 
 private:
 	GLFWwindow *m_pWindow;
 	glm::mat4 m_project;
 
-	Table m_table;
+	Plane m_planeFloor;
 
+	std::array<Box, 4> m_walls;
 	std::array<Ball, 16> m_ballArray;
 };
 

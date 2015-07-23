@@ -5,6 +5,8 @@
 
 #include "Camera.h"
 
+#include <cmath>
+
 PlayState::PlayState(GLFWwindow *_pWindow) :
 	m_project(	1, 0, 0, 1,
 				0, 1, 0, 1,
@@ -32,8 +34,6 @@ void PlayState::Update(float _dt)
 	//update all le balls 
 	for (unsigned int i = 0; i < m_ballArray.size(); i++)
 		m_ballArray[i].Update(_dt);
-
-	m_table.Update(_dt);
 }
 
 void PlayState::Draw(Camera *_camera)
@@ -46,7 +46,10 @@ void PlayState::Draw(Camera *_camera)
 	for (unsigned int i = 0; i < m_ballArray.size(); i++)
 		m_ballArray[i].Draw(_camera);
 
-	m_table.Draw(_camera);
+	for (unsigned int i = 0; i < m_walls.size(); i++)
+		m_walls[i].Draw(_camera);
+
+	m_planeFloor.Draw();
 
 	Gizmos::draw(_camera->getProjectionView());
 }
@@ -59,6 +62,31 @@ void PlayState::ResetGame()
 		m_ballArray[i].SetVelocity(glm::vec3(0, 0, 0));
  		m_ballArray[i].SetMass(10);
 	}
+
+	for (unsigned int i = 0; i < m_walls.size(); i++)
+	{
+		m_walls[i].SetMass(100000);
+		m_walls[i].SetSize(glm::vec3(0, 100, 0));
+	}
+
+	//Positioning walls
+	//------------------------------------
+	
+	const int wallWidth = 30;
+	const int wallLength = 400;
+	const int wallHieght = 100;
+	m_walls[0].SetSize(glm::vec3(wallWidth, m_walls[0].GetSzie().y , wallLength));
+	m_walls[0].SetPosition(glm::vec3(wallLength/2, wallHieght/2, 0));
+
+	m_walls[1].SetSize(glm::vec3(wallWidth, m_walls[0].GetSzie().y, wallLength));
+	m_walls[1].SetPosition(glm::vec3(-wallLength/2, wallHieght/2, 0));
+
+	m_walls[2].SetSize(glm::vec3(wallLength, m_walls[0].GetSzie().y, wallWidth/2));
+	m_walls[2].SetPosition(glm::vec3(0, wallHieght/2, wallLength/2));
+
+	m_walls[3].SetSize(glm::vec3(wallLength, m_walls[0].GetSzie().y, wallWidth));
+	m_walls[3].SetPosition(glm::vec3(0, wallHieght/2, -wallLength/2));
+	//------------------------------------
 
 	//white ball
 	m_ballArray[0].SetVelocity(glm::vec3(-300, 0, 0));
@@ -87,6 +115,7 @@ void PlayState::CollisionDetection(float _dt)
 {
 	BallBallCollision();
 	BallPlaneCollision();
+	BallAABBCollision();
 }
 
 void PlayState::BallBallCollision()
@@ -95,7 +124,7 @@ void PlayState::BallBallCollision()
 	for (unsigned int x = 0; x < m_ballArray.size(); x++)
 	{
 		for (unsigned int y = 0; y < m_ballArray.size(); y++)
-		{
+		{ 
 			if (x == y)
 				continue;
 
@@ -135,7 +164,7 @@ void PlayState::BallPlaneCollision()
 
 		if (abs(m_ballArray[x].GetTransform()[3].y) < 50)
 		{
-			glm::vec3 planeNormal = m_table.GetTable().GetNormal();
+			glm::vec3 planeNormal = m_planeFloor.GetNormal();
 			glm::vec3 ballPosition = m_ballArray[x].GetTransform()[3].xyz;
 
 			float sphereToPlane = glm::dot(ballPosition, planeNormal) - 0;
@@ -149,8 +178,36 @@ void PlayState::BallPlaneCollision()
 			if (intersection > 0)
 			{
 				glm::vec3 forceVec = -1 * m_ballArray[x].GetMass() * planeNormal * (glm::dot(planeNormal, m_ballArray[x].GetVelocity()));
-				m_ballArray[x].ApplyForce(forceVec + forceVec * m_table.GetTable().GetBounce());
+				m_ballArray[x].ApplyForce(forceVec + forceVec * m_planeFloor.GetBounce());
 				m_ballArray[x].SetPosition((m_ballArray[x].GetTransform()[3].xyz + planeNormal * intersection * 0.5f));
+			}
+		}
+	}
+}
+
+void PlayState::BallAABBCollision()
+{
+	for (unsigned int itrBall = 0; itrBall < m_ballArray.size(); itrBall++)
+	{
+		m_ballArray[itrBall].SetColour(glm::vec4(0.5f, 1.0f, 0.5f, 1));
+
+		for (unsigned int itrWall = 0; itrWall < m_walls.size(); itrWall++)
+		{
+			bool colliding = false;
+			glm::vec3 ballPos = m_ballArray[itrBall].GetTransform()[3].xyz;
+			glm::vec3 wallPos = m_walls[itrWall].GetTransform()[3].xyz;
+			float ballRadius = m_ballArray[itrBall].GetRadius();
+			
+			float halfWallWidth = m_walls[itrWall].GetExtents().x;
+			float halfWallLength = m_walls[itrWall].GetExtents().z;
+
+			float ballXDelta = std::abs(ballPos.x - wallPos.x);
+			float ballZDelta = std::abs(ballPos.z - wallPos.z);
+
+		
+			if (ballXDelta < ballRadius + halfWallWidth && ballZDelta < ballRadius + halfWallLength)
+			{
+ 				m_ballArray[itrBall].SetColour(glm::vec4(1.0f, 0.5f, 0.5f, 1));
 			}
 		}
 	}
