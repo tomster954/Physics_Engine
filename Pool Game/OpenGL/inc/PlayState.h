@@ -32,6 +32,7 @@ public:
 	void BallBallCollision();
 	void BallPlaneCollision();
 	void BallAABBCollision();
+	void Spring();
 
 private:
 	GLFWwindow *m_pWindow;
