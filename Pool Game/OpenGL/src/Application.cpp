@@ -43,6 +43,9 @@ Application::Application(glm::vec4 _backgroundColour)
 	m_lastTime		= 0.0f;
 
 	m_playState = new PlayState(m_pWindow);
+	m_physXState = new PhysXState(m_pWindow);
+
+	m_physXStateBool = false;
 }
 
 //Destructor
@@ -72,12 +75,32 @@ void Application::Update()
 	m_lastTime		= m_currentTime;
 
 	m_camera->update(m_deltaTime);
-	m_playState->Update(m_deltaTime);
+
+	if (glfwGetKey(m_pWindow, GLFW_KEY_Q) == GLFW_PRESS && !m_keyPressed)
+		m_physXStateBool = !m_physXStateBool;
+		
+	switch (m_physXStateBool)
+	{
+	case 0:
+		m_playState->Update(m_deltaTime);
+	case 1:
+		m_physXState->Update(m_deltaTime);
+	}
+
+	m_keyPressed = false;
+	if (glfwGetKey(m_pWindow, GLFW_KEY_Q) == GLFW_PRESS)
+		m_keyPressed = true;
 }
 
 void Application::Draw()
 {
 	glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
 	
-	m_playState->Draw(m_camera);
+	switch (m_physXStateBool)
+	{
+	case 0:
+		m_playState->Draw(m_camera);
+	case 1:
+		m_physXState->Draw(m_camera);
+	}
 }

@@ -15,7 +15,6 @@ PlayState::PlayState(GLFWwindow *_pWindow) :
 {
 	Gizmos::create();
 	m_pWindow = _pWindow;
-
 	ResetGame();
 }
 

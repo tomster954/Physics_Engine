@@ -15,7 +15,7 @@
 #include <glm/ext.hpp>
 
 #include "PlayState.h"
-#include "Networking.h"
+#include "PhysXState.h"
 
 using glm::vec3;
 using glm::vec4;
@@ -43,13 +43,16 @@ private:
 	GLFWwindow *m_pWindow;
 	Camera *m_camera;
 	PlayState *m_playState;
-	Networking *m_network;
+	PhysXState *m_physXState;
 
 	bool m_gameOver;
 
 	float	m_lastTime;
 	float	m_currentTime;
 	float	m_deltaTime;
+
+	bool m_keyPressed;
+	bool m_physXStateBool;
 };
 
 #endif

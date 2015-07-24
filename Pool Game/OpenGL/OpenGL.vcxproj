@@ -52,14 +52,14 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;GLM_FORCE_PURE;_CRT_SECURE_NO_WARNINGS;GLM_SWIZZLE;_DEBUG;_CONSOLE;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>./dep/glfw/include;./dep/glm;./dep/aieutilities;./src;./inc;./dep/AntTweakBar/include;./dep/RakNet/inc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>./dep/glfw/include;./dep/glm;./dep/aieutilities;./src;./inc;./dep/AntTweakBar/include;./dep/RakNet/inc;./dep/PhysxSDK/Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>./dep/glfw/lib-vc2012;./dep/AntTweakBar/lib;./dep/RakNet/lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>opengl32.lib;glfw3.lib;AntTweakBar.lib;RakNet_d.lib;ws2_32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>./dep/glfw/lib-vc2012;./dep/AntTweakBar/lib;./dep/RakNet/lib;./dep/PhysxSDK/Lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>opengl32.lib;glfw3.lib;AntTweakBar.lib;RakNet_d.lib;ws2_32.lib;PhysX3DEBUG_x86.lib;PhysX3ExtensionsDEBUG.lib;PhysX3CommonDEBUG_x86.lib;PhysX3VehicleDEBUG.lib;PhysX3CharacterKinematicDEBUG_x86.lib;PhysX3CookingDEBUG_x86.lib;PhysXVisualDebuggerSDKDEBUG.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -89,6 +89,7 @@
     <ClCompile Include="src\Ball.cpp" />
     <ClCompile Include="src\Box.cpp" />
     <ClCompile Include="src\Networking.cpp" />
+    <ClCompile Include="src\PhysXState.cpp" />
     <ClCompile Include="src\Plane.cpp" />
     <ClCompile Include="src\PlayState.cpp" />
     <ClCompile Include="src\Camera.cpp" />
@@ -107,6 +108,7 @@
     <ClInclude Include="inc\gl_core_4_4.h" />
     <ClInclude Include="inc\GUI_Bar.h" />
     <ClInclude Include="inc\Networking.h" />
+    <ClInclude Include="inc\PhysXState.h" />
     <ClInclude Include="inc\Plane.h" />
     <ClInclude Include="inc\PlayState.h" />
     <ClInclude Include="inc\Table.h" />

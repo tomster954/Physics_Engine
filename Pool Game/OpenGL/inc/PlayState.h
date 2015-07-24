@@ -23,6 +23,7 @@ class PlayState
 public:
 	PlayState(GLFWwindow *_pWindow);
 	~PlayState();
+
 	void Update(float _dt);
 	void Draw(Camera *_camera);
 	void ResetGame();
