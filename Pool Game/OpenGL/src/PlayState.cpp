@@ -25,7 +25,7 @@ PlayState::~PlayState()
 
 void PlayState::Update(float _dt)
 {
-	if (glfwGetKey(m_pWindow, GLFW_KEY_SPACE) == GLFW_PRESS)
+	if (glfwGetKey(m_pWindow, GLFW_KEY_R) == GLFW_PRESS)
 		ResetGame();
 
 	CollisionDetection(_dt);

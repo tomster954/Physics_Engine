@@ -83,8 +83,10 @@ void Application::Update()
 	{
 	case 0:
 		m_playState->Update(m_deltaTime);
+		break;
 	case 1:
 		m_physXState->Update(m_deltaTime);
+		break;
 	}
 
 	m_keyPressed = false;
@@ -100,7 +102,9 @@ void Application::Draw()
 	{
 	case 0:
 		m_playState->Draw(m_camera);
+		break;
 	case 1:
 		m_physXState->Draw(m_camera);
+		break;
 	}
 }
