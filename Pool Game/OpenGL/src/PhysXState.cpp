@@ -6,6 +6,8 @@
 #include <pvd/PxVisualDebugger.h>
 #include "glm/ext.hpp"
 
+#include <stdlib.h>
+
 #include <gl_core_4_4.h>
 #include <GLFW/glfw3.h>
 
@@ -33,7 +35,7 @@ m_project(	1, 0, 0, 1,
 			0, 0, 0, 1)
 {
 	m_pWindow = _pWindow;
-	Reset();
+	SetUpPhysX();
 }
 
 PhysXState::~PhysXState()
@@ -45,8 +47,12 @@ PhysXState::~PhysXState()
 
 void PhysXState::Reset()
 {
+	for each(auto i in g_PhysXActors)
+		g_PhysicsScene->removeActor(*i);
+
 	g_PhysXActors.clear();
-	SetUpPhysX();
+	
+	CreateBoxes();
 }
 
 void PhysXState::SetUpPhysX()
@@ -65,10 +71,8 @@ void PhysXState::SetUpPhysX()
 	sceneDesc.cpuDispatcher = PxDefaultCpuDispatcherCreate(1);
 	
 	g_PhysicsScene = g_Physics->createScene(sceneDesc);
-
 	SetUpVisualDebugger();
 	SetupTutorial1();
-
 }
 
 void PhysXState::Update(float _dt)
@@ -145,24 +149,8 @@ void PhysXState::SetupTutorial1()
 	
 	//add it to the physX scene
 	g_PhysicsScene->addActor(*plane);
-	
-	//add a box
-	float density = 1000;
-	PxBoxGeometry box(20, 20, 20);
-	PxTransform transform(PxVec3(0, 30, 0));
-	PxRigidDynamic* dynamicActor = PxCreateDynamic(*g_Physics, transform, box, *g_PhysicsMaterial, density);
 
-	transform.p.y += 80;
-	transform.p.x += 20;
-
-	PxRigidDynamic* dynamicActor2 = PxCreateDynamic(*g_Physics, transform, box, *g_PhysicsMaterial, density);
-	
-	//add it to the physX scene
-	g_PhysicsScene->addActor(*dynamicActor);
-	g_PhysXActors.push_back(dynamicActor);
-
-	g_PhysicsScene->addActor(*dynamicActor2);
-	g_PhysXActors.push_back(dynamicActor2);
+	CreateBoxes();
 }
 
 void PhysXState::AddWidget(PxShape* shape, PxRigidActor* actor)
@@ -211,4 +199,31 @@ void PhysXState::AddBox(PxShape* pShape, PxRigidActor* actor)
 	
 	//create our box gizmo
 	Gizmos::addAABBFilled(position, extents, colour, &M);
+}
+
+void PhysXState::CreateBoxes()
+{
+	//add a box
+	float density = 1000;
+	PxBoxGeometry box(20, 20, 20);
+	PxTransform transform(PxVec3(0, 10, 0));
+	PxRigidDynamic* dynamicActor;
+
+	float boxes = 10;
+	float rnd;
+
+	for (int i = 0; i < boxes; i++)
+	{
+		rnd = rand() % 50;
+
+		transform.p.y = transform.p.y + 50;
+		transform.p.x = rnd - 25;
+		transform.p.z = rnd - 25;
+
+		dynamicActor = PxCreateDynamic(*g_Physics, transform, box, *g_PhysicsMaterial, density);
+		
+		//add it to the physX scene
+		g_PhysicsScene->addActor(*dynamicActor);
+		g_PhysXActors.push_back(dynamicActor);
+	}
 }

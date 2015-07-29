@@ -25,6 +25,8 @@ public:
 	void Update(float _dt);
 	void Draw(Camera *_camera);
 	
+	void CreateBoxes();
+
 	void Reset();
 
 	void SetUpPhysX();
@@ -47,7 +49,6 @@ private:
 	PxMaterial* g_PhysicsMaterial;
 	PxMaterial* g_boxMaterial;
 	PxCooking* g_PhysicsCooker;
-
 	PxRigidStatic* plane;
 
 	std::vector<PxRigidActor*> g_PhysXActors;
