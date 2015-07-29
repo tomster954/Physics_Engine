@@ -35,6 +35,7 @@ public:
 
 	void AddWidget(PxShape* shape, PxRigidActor* actor);
 	void AddBox(PxShape* pShape, PxRigidActor* actor);
+	void AddPlane(PxShape* pShape, PxRigidActor* actor);
 
 private:
 	GLFWwindow *m_pWindow;
