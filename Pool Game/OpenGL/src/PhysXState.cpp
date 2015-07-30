@@ -1,6 +1,7 @@
 #include "PhysXState.h"
 #include <Gizmos.h>
 #include "Ragdoll.h"
+#include "ParticleEmitter.h"
 
 #include <PxPhysicsAPI.h>
 #include <PxScene.h>
@@ -37,6 +38,7 @@ m_project(	1, 0, 0, 1,
 {
 	m_pWindow = _pWindow;
 	SetUpPhysX();
+	InitParticles();
 }
 
 PhysXState::~PhysXState()
@@ -84,6 +86,7 @@ void PhysXState::SetUpPhysX()
 	Reset();
 
 	m_ragdoll = new Ragdoll(g_Physics, g_PhysicsMaterial, g_PhysicsScene);
+	m_ragdoll->SetPosition(glm::vec3(50));
 }
 
 void PhysXState::Update(float _dt)
@@ -93,15 +96,21 @@ void PhysXState::Update(float _dt)
 	if (glfwGetKey(m_pWindow, GLFW_KEY_R) == GLFW_PRESS)
 		Reset();
 
-	if (_dt <= 0)
-		return;
-
 	g_PhysicsScene->simulate(_dt);
+
 	
 	while (g_PhysicsScene->fetchResults() == false)
 	{
-		// don’t need to do anything here yet but we have to fetch results
+		//dont need to do anythig here yet but have to fetch results
 	}
+	
+	if (m_particleEmitter)
+	{
+		m_particleEmitter->update(_dt);
+		//render all our particles
+		m_particleEmitter->renderParticles();
+	}
+
 
 	// Add widgets to represent all the phsyX actors which are in the scene
 	for (auto actor : g_PhysXActors)
@@ -122,6 +131,9 @@ void PhysXState::Draw(Camera *_camera)
 {
 	glm::vec4 colour;
 	colour = glm::vec4(1.0f, 0.0f, 0.0f, 1.0f);
+
+	m_ragdoll->Draw();
+
 	Gizmos::draw(_camera->getProjectionView());
 }
 
@@ -231,7 +243,7 @@ void PhysXState::CreateBoxes()
 	//falling boxes
 	for (int i = 0; i < boxes; i++)
 	{
-		rnd = rand() % 50;
+		rnd = (float)(rand() % 50);
 
 		transform.p.y = transform.p.y + 1;
 		transform.p.x = (rnd - 25.0f) / 10.0f;
@@ -273,4 +285,33 @@ void PhysXState::CreateBoxes()
 	boxWall = PxCreateStatic(*g_Physics, pose, side2, *g_PhysicsMaterial);
 	g_PhysicsScene->addActor(*boxWall);
 	g_PhysXActors.push_back(boxWall);
+}
+
+void PhysXState::InitParticles()
+{
+	//create our particle system
+	PxParticleFluid* pf;
+	// create particle system in PhysX SDK
+	// set immutable properties.
+	PxU32 maxParticles = 2000;
+	bool perParticleRestOffset = false;
+
+	pf = g_Physics->createParticleFluid(maxParticles, perParticleRestOffset);
+	pf->setRestParticleDistance(1.5f);
+	pf->setDynamicFriction(0.1);
+	pf->setStaticFriction(0.1);
+	pf->setDamping(0.1);
+	pf->setParticleMass(.1);
+	pf->setRestitution(0);
+
+	pf->setParticleBaseFlag(PxParticleBaseFlag::eCOLLISION_TWOWAY, true);
+	pf->setStiffness(100);
+	if (pf)
+	{
+		g_PhysicsScene->addActor(*pf);
+		m_particleEmitter = new ParticleFluidEmitter(maxParticles, PxVec3(0, 10, 0), pf, 0.05f);
+		m_particleEmitter->setStartVelocityRange(-10.0f, 0, -10.0f, 10.0f, 0, 10.0f);
+		m_particleEmitter->setSize(glm::vec3(0.5f, 0.5f, 0.5f));
+		m_particleEmitter->setColour(glm::vec4(1, 0, 0, 1));
+	}
 }

@@ -1,6 +1,6 @@
 #include "Ragdoll.h"
-
-
+#include "glm/glm.hpp"
+#include "Gizmos.h"
 Ragdoll::Ragdoll(PxPhysics* _physics, PxMaterial* _material, PxScene* _scene)
 {
 	//complex humanoid ragdoll example
@@ -25,9 +25,8 @@ Ragdoll::Ragdoll(PxPhysics* _physics, PxMaterial* _material, PxScene* _scene)
 		NULL
 	};
 
-	PxArticulation* ragDollArticulation;
-	ragDollArticulation = Ragdoll::MakeRagdoll(_physics, ragdollData, PxTransform(PxVec3(0, 0, 0)), .1f, _material);
-	_scene->addArticulation(*ragDollArticulation);
+	m_body = Ragdoll::MakeRagdoll(_physics, ragdollData, PxTransform(PxVec3(0, 20, -50)), .1f, _material);
+	_scene->addArticulation(*m_body);
 }
 
 Ragdoll::~Ragdoll()
@@ -37,32 +36,34 @@ Ragdoll::~Ragdoll()
 
 void Ragdoll::Update(float _dt)
 {
-	//or (auto articulation : g_PhysXActorsRagDolls)
-	//
-	//	PxU32 nLinks = articulation->getNbLinks();
-	//	PxArticulationLink** links = new PxArticulationLink*[nLinks];
-	//	articulation->getLinks(links, nLinks);
-	//	if (renderGizmo)
-	//	{
-	//		while (nLinks--)
-	//		{
-	//			PxArticulationLink* link = links[nLinks];
-	//			PxU32 nShapes = link->getNbShapes();
-	//			PxShape** shapes = new PxShape*[nShapes];
-	//			link->getShapes(shapes, nShapes);
-	//			while (nShapes--)
-	//			{
-	//				addWidget(shapes[nShapes], link);
-	//			}
-	//		}
-	//		delete[] links;
-	//	}
-	//
+	
 }
 
 void Ragdoll::Draw()
 {
-
+	PxU32 nLinks = m_body->getNbLinks();
+	PxArticulationLink** links = new PxArticulationLink*[nLinks];
+	m_body->getLinks(links, nLinks);
+	while (nLinks--)
+	{
+		PxArticulationLink* link = links[nLinks];
+		PxU32 nShapes = link->getNbShapes();
+		PxShape** shapes = new PxShape*[nShapes];
+		link->getShapes(shapes, nShapes);
+		while (nShapes--)
+		{
+			PxSphereGeometry geometry;
+			shapes[nShapes]->getSphereGeometry(geometry);
+			float radius = geometry.radius + 1;
+			glm::vec3 center;
+			center.x = link->getWorldBounds().getCenter().x;
+			center.y = link->getWorldBounds().getCenter().y;
+			center.z = link->getWorldBounds().getCenter().z;
+			//glm::mat4 newRot = Utils::TransformToMat4(_actor->getGlobalPose());
+			Gizmos::addSphere(center, radius, 5, 5, glm::vec4(1, 0, 0, 1));
+		}
+	}
+	delete[] links;
 }
 
 PxArticulation* Ragdoll::MakeRagdoll(PxPhysics* g_Physics, RagdollNode** nodeArray,	PxTransform worldPos, float scaleFactor, PxMaterial* ragdollMaterial)
@@ -144,3 +145,36 @@ PxArticulation* Ragdoll::MakeRagdoll(PxPhysics* g_Physics, RagdollNode** nodeArr
 	return articulation;
 }
 
+void Ragdoll::AddWidget(PxShape* shape, PxRigidActor* actor)
+{
+	PxGeometryType::Enum type = shape->getGeometryType();
+	switch (type)
+	{
+	case PxGeometryType::eSPHERE:
+		AddSphere(shape, actor);
+		break;
+	case PxGeometryType::eCAPSULE:
+		AddCapsule(shape, actor);
+		break;
+	}
+}
+
+void Ragdoll::AddSphere(PxShape* pShape, PxRigidActor* actor)
+{
+	//bool status = pShape->getSphereGeometry(geometry);
+	//if (status)
+	//{
+	//	radius = geometry.radius;
+	//}
+}
+
+void Ragdoll::AddCapsule(PxShape* pShape, PxRigidActor* actor)
+{
+	//bool status = pShape->getCapsuleGeometry(capsuleGeometry);
+	//if (status)
+	//{
+	//	radius = capsuleGeometry.radius; //copy out capsule radius
+	//	halfHeight = capsuleGeometry.halfHeight; //copy out capsule half length
+	//}
+	//PxTransform transform = PxShapeExt::getGlobalPose(*pShape, *actor);
+}

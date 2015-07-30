@@ -8,6 +8,7 @@
 
 #include "Camera.h"
 #include "Ragdoll.h"
+#include "ParticleFluidEmitter.h"
 struct GLFWwindow;
 
 #include <PxPhysicsAPI.h>
@@ -32,7 +33,7 @@ public:
 
 	void SetUpPhysX();
 	void SetUpVisualDebugger();
-	void SetupTutorial1();
+	void InitParticles();
 
 	void AddWidget(PxShape* shape, PxRigidActor* actor);
 	void AddBox(PxShape* pShape, PxRigidActor* actor);
@@ -56,6 +57,8 @@ private:
 	std::vector<PxRigidActor*> g_PhysXActors;
 
 	Ragdoll *m_ragdoll;
+
+	ParticleFluidEmitter *m_particleEmitter;
 
 };
 
