@@ -1,5 +1,6 @@
 #include "PhysXState.h"
 #include <Gizmos.h>
+#include "Ragdoll.h"
 
 #include <PxPhysicsAPI.h>
 #include <PxScene.h>
@@ -48,18 +49,18 @@ PhysXState::~PhysXState()
 void PhysXState::Reset()
 {
 	for each(auto i in g_PhysXActors)
-	{
-		PxGeometryType::Enum type;
-		type = i->getType();
-
-		if (type == PxGeometryType::eBOX)
-		{
-			g_PhysicsScene->removeActor(*i);
-		}
-	}
+		g_PhysicsScene->removeActor(*i);
 
 	g_PhysXActors.clear();
 	
+	//add a plane
+	PxTransform pose = PxTransform(PxVec3(0.0f, 0.0f, 0.0f), PxQuat(PxHalfPi*1.0f, PxVec3(0.0f, 0.0f, 1.0f)));
+	plane = PxCreateStatic(*g_Physics, pose, PxPlaneGeometry(), *g_PhysicsMaterial);
+
+	//add it to the physX scene
+	g_PhysicsScene->addActor(*plane);
+	g_PhysXActors.push_back(plane);
+
 	CreateBoxes();
 }
 
@@ -74,13 +75,15 @@ void PhysXState::SetUpPhysX()
 	g_PhysicsMaterial = g_Physics->createMaterial(0.2f, 0.2f, 0.2f);
 	PxSceneDesc sceneDesc(g_Physics->getTolerancesScale());
 	
-	sceneDesc.gravity = PxVec3(0, -200.0f, 0);
+	sceneDesc.gravity = PxVec3(0, -10.0f, 0);
 	sceneDesc.filterShader = &physx::PxDefaultSimulationFilterShader;
 	sceneDesc.cpuDispatcher = PxDefaultCpuDispatcherCreate(1);
 	
 	g_PhysicsScene = g_Physics->createScene(sceneDesc);
 	SetUpVisualDebugger();
-	SetupTutorial1();
+	Reset();
+
+	m_ragdoll = new Ragdoll(g_Physics, g_PhysicsMaterial, g_PhysicsScene);
 }
 
 void PhysXState::Update(float _dt)
@@ -91,10 +94,10 @@ void PhysXState::Update(float _dt)
 		Reset();
 
 	if (_dt <= 0)
-	{
 		return;
-	}
+
 	g_PhysicsScene->simulate(_dt);
+	
 	while (g_PhysicsScene->fetchResults() == false)
 	{
 		// don’t need to do anything here yet but we have to fetch results
@@ -103,28 +106,22 @@ void PhysXState::Update(float _dt)
 	// Add widgets to represent all the phsyX actors which are in the scene
 	for (auto actor : g_PhysXActors)
 	{
-		{
-			PxU32 nShapes = actor->getNbShapes();
-			PxShape** shapes = new PxShape*[nShapes];
-			actor->getShapes(shapes, nShapes);
-			// Render all the shapes in the physx actor (for early tutorials there is just one)
-			while (nShapes--)
-			{
-				AddWidget(shapes[nShapes], actor);
-			}
-			delete[] shapes;
-		}
+		PxU32 nShapes = actor->getNbShapes();
+		PxShape** shapes = new PxShape*[nShapes];
+		actor->getShapes(shapes, nShapes);
+		
+		// Render all the shapes in the physx actor (for early tutorials there is just one)
+		while (nShapes--)
+			AddWidget(shapes[nShapes], actor);
+
+		delete[] shapes;
 	}
 }
 
 void PhysXState::Draw(Camera *_camera)
 {
-	
 	glm::vec4 colour;
 	colour = glm::vec4(1.0f, 0.0f, 0.0f, 1.0f);
-
-	//Gizmos::addAABBFilled(glm::vec3(0, 0, 0), glm::vec3(10, 5, 10), colour, &m_project);
-
 	Gizmos::draw(_camera->getProjectionView());
 }
 
@@ -147,19 +144,6 @@ void PhysXState::SetUpVisualDebugger()
 	
 	// and now try to connectPxVisualDebuggerExt
 	auto theConnection = PxVisualDebuggerExt::createConnection(g_Physics->getPvdConnectionManager(), pvd_host_ip, port, timeout, connectionFlags);
-}
-
-void PhysXState::SetupTutorial1()
-{
-	//add a plane
-	PxTransform pose = PxTransform(PxVec3(0.0f, 0.0f, 0.0f), PxQuat(PxHalfPi*1.0f, PxVec3(0.0f, 0.0f, 1.0f)));
-	plane = PxCreateStatic(*g_Physics, pose, PxPlaneGeometry(), *g_PhysicsMaterial);
-	
-	//add it to the physX scene
-	g_PhysicsScene->addActor(*plane);
-	g_PhysXActors.push_back(plane);
-
-	CreateBoxes();
 }
 
 void PhysXState::AddWidget(PxShape* shape, PxRigidActor* actor)
@@ -205,9 +189,7 @@ void PhysXState::AddBox(PxShape* pShape, PxRigidActor* actor)
 	glm::vec4 colour = glm::vec4(1, 0, 0, 1);
 	
 	if (actor->getName() != NULL && strcmp(actor->getName(), "Pickup1")) //seriously horrid hack so I can show pickups a different colour
-	{
 		colour = glm::vec4(0, 1, 0, 1);
-	}
 	
 	//create our box gizmo
 	Gizmos::addAABBFilled(position, extents, colour, &M);
@@ -221,11 +203,7 @@ void PhysXState::AddPlane(PxShape* pShape, PxRigidActor* actor)
 
 	//get the transform for this PhysX collision volume
 	PxMat44 m(PxShapeExt::getGlobalPose(*pShape, *actor));
-	glm::mat4 M(m.column0.x, m.column0.y, m.column0.z, m.column0.w,
-				m.column1.x, m.column1.y, m.column1.z, m.column1.w,
-				m.column2.x, m.column2.y, m.column2.z, m.column2.w,
-				m.column3.x, m.column3.y, m.column3.z, m.column3.w);
-
+	
 	glm::vec3 position;
 	//get the position out of the transform
 	position.x = m.getPosition().x;
@@ -242,9 +220,9 @@ void PhysXState::AddPlane(PxShape* pShape, PxRigidActor* actor)
 void PhysXState::CreateBoxes()
 {
 	//Box vars
-	float density = 1000;
-	PxBoxGeometry box(20, 20, 20);
-	PxTransform transform(PxVec3(0, 10, 0));
+	float density = 100;
+	PxBoxGeometry box(0.5f, 0.5f, 0.5f);
+	PxTransform transform(PxVec3(0, 1, 0));
 	PxRigidDynamic* dynamicActor;
 
 	float boxes = 10;
@@ -255,9 +233,9 @@ void PhysXState::CreateBoxes()
 	{
 		rnd = rand() % 50;
 
-		transform.p.y = transform.p.y + 50;
-		transform.p.x = rnd - 25;
-		transform.p.z = rnd - 25;
+		transform.p.y = transform.p.y + 1;
+		transform.p.x = (rnd - 25.0f) / 10.0f;
+		transform.p.z = (rnd - 25.0f) / 10.0f;
 
 		dynamicActor = PxCreateDynamic(*g_Physics, transform, box, *g_PhysicsMaterial, density);
 		
@@ -268,27 +246,30 @@ void PhysXState::CreateBoxes()
 
 	PxTransform pose = PxTransform(PxVec3(0.0f, 0, 0.0f), PxQuat(PxHalfPi, PxVec3(0.0f, 0.0f, 1.0f)));
 
-	float yExtent = 100;
+	float yExtent = 5;
+	float longSide = 10;
+	float thinSide = 1;
 
-	PxBoxGeometry side1(450, yExtent, 50);
-	PxBoxGeometry side2(50, yExtent, 450);
-	pose = PxTransform(PxVec3(0.0f, yExtent, 400));
+	PxBoxGeometry side1(longSide, yExtent, thinSide);
+	PxBoxGeometry side2(thinSide, yExtent, longSide);
+
+	pose = PxTransform(PxVec3(0.0f, yExtent, longSide));
 	PxRigidStatic* boxWall = PxCreateStatic(*g_Physics, pose, side1, *g_PhysicsMaterial);
 
 	g_PhysicsScene->addActor(*boxWall);
 	g_PhysXActors.push_back(boxWall);
 
-	pose = PxTransform(PxVec3(0.0f, yExtent, -400));
+	pose = PxTransform(PxVec3(0.0f, yExtent, -longSide));
 	boxWall = PxCreateStatic(*g_Physics, pose, side1, *g_PhysicsMaterial);
 	g_PhysicsScene->addActor(*boxWall);
 	g_PhysXActors.push_back(boxWall);
 	
-	pose = PxTransform(PxVec3(400, yExtent, 0));
+	pose = PxTransform(PxVec3(longSide, yExtent, 0));
 	boxWall = PxCreateStatic(*g_Physics, pose, side2, *g_PhysicsMaterial);
 	g_PhysicsScene->addActor(*boxWall);
 	g_PhysXActors.push_back(boxWall);
 	
-	pose = PxTransform(PxVec3(-400, yExtent, 0));
+	pose = PxTransform(PxVec3(-longSide, yExtent, 0));
 	boxWall = PxCreateStatic(*g_Physics, pose, side2, *g_PhysicsMaterial);
 	g_PhysicsScene->addActor(*boxWall);
 	g_PhysXActors.push_back(boxWall);

@@ -42,7 +42,7 @@ private:
 	Plane m_planeFloor;
 
 	std::array<Box, 4> m_walls;
-	std::array<Ball, 16> m_ballArray;
+	std::array<Ball, 50> m_ballArray;
 };
 
 #endif

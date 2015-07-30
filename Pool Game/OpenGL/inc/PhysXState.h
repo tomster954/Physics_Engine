@@ -7,6 +7,7 @@
 #define PHYSXSTATE
 
 #include "Camera.h"
+#include "Ragdoll.h"
 struct GLFWwindow;
 
 #include <PxPhysicsAPI.h>
@@ -52,7 +53,10 @@ private:
 	PxCooking* g_PhysicsCooker;
 	PxRigidStatic* plane;
 
-	std::vector<PxRigidActor*> g_PhysXActors;
+	std::vector<PxRigidActor*> g_PhysXActors;
+
+	Ragdoll *m_ragdoll;
+
 };
 
 #endif

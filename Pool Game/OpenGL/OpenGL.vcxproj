@@ -96,6 +96,7 @@
     <ClCompile Include="src\gl_core_4_4.c" />
     <ClCompile Include="src\GUI_Bar.cpp" />
     <ClCompile Include="src\Main.cpp" />
+    <ClCompile Include="src\Ragdoll.cpp" />
     <ClCompile Include="src\Table.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -111,6 +112,7 @@
     <ClInclude Include="inc\PhysXState.h" />
     <ClInclude Include="inc\Plane.h" />
     <ClInclude Include="inc\PlayState.h" />
+    <ClInclude Include="inc\Ragdoll.h" />
     <ClInclude Include="inc\Table.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

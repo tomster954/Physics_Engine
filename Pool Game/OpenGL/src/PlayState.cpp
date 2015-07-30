@@ -15,6 +15,9 @@ PlayState::PlayState(GLFWwindow *_pWindow) :
 {
 	Gizmos::create();
 	m_pWindow = _pWindow;
+	
+	m_planeFloor.SetBounce(1.0f);
+
 	ResetGame();
 }
 
@@ -56,32 +59,26 @@ void PlayState::Draw(Camera *_camera)
 
 	//Adding a line between the springy spheres
 	Gizmos::addLine(m_ballArray[0].GetTransform()[3].xyz, m_ballArray[1].GetTransform()[3].xyz, colour);
-	Gizmos::addAABBFilled(glm::vec3(0, 0, 0), glm::vec3(10, 5, 10), colour, &m_project);
 
 	Gizmos::draw(_camera->getProjectionView());
 }
 
 void PlayState::ResetGame()
 {
-	//Sets all the ball velocities to 0 and mass to 10
-	for (unsigned int i = 0; i < m_ballArray.size(); i++)
-	{
-		m_ballArray[i].SetVelocity(glm::vec3(0, 0, 0));
- 		m_ballArray[i].SetMass(10);
-	}
-
 	//sets the walls height and mass
 	for (unsigned int i = 0; i < m_walls.size(); i++)
 	{
 		m_walls[i].SetMass(100000);
-		m_walls[i].SetSize(glm::vec3(0, 100, 0));
+		m_walls[i].SetSize(glm::vec3(0, 30, 0));
+		m_walls[i].SetColour(glm::vec4(0.5f, 1, 0.5f, 1));
 	}
 
 	//Positioning walls
 	//----------------------------------------------------------------------------
-	const int wallWidth = 30;
-	const int wallLength = 400;
-	const int wallHieght = 100;
+	const int wallWidth = 1;
+	const int wallLength = 100;
+	const int wallHieght = m_walls[0].GetSzie().y / 2;
+
 	m_walls[0].SetSize(glm::vec3(wallWidth, m_walls[0].GetSzie().y , wallLength));
 	m_walls[0].SetPosition(glm::vec3(wallLength/2, wallHieght/2, 0));
 	
@@ -96,24 +93,20 @@ void PlayState::ResetGame()
 	//----------------------------------------------------------------------------
 
 	//Arranging the balls
-	//----------------------------------------------------------------------------
-	m_ballArray[0].SetVelocity(glm::vec3(-200, 0, 0));
-	m_ballArray[0].SetPosition(glm::vec3(150, 50, 0));
-
-	int ballNumber = 1;
-	int ballDiameter = 20;
-	for (int col = 1; col < 6; col++)
+	//--------------------------------------------------------------------------
+	float rndX, rndZ;
+	for (int itr = 0; itr < m_ballArray.size(); itr++)
 	{
-		float x = (-ballDiameter + 2.5f) * col;
-		for (int  i = 0; i < col; i++)
-		{
-			int z = (ballDiameter * col) / 2 - (ballDiameter / 2);
-			z += -ballDiameter * i;
-	
-			m_ballArray[ballNumber].SetPosition(glm::vec3(x - 100, 80, z));
-			ballNumber++;
-		}
+		rndX = (float)((rand() % 800) - 400) / 10;
+		rndZ = (float)((rand() % 800) - 400) / 10;
+
+		m_ballArray[itr].SetPosition(glm::vec3(rndX, 10, rndZ));
+		m_ballArray[itr].SetVelocity(glm::vec3(rndX * 2, 0, rndZ * 2));
+		m_ballArray[itr].SetDrag(10.0f);
+		m_ballArray[itr].SetColour(glm::vec4(0.9f, 1.0f, 0.5f, 1));
 	}
+	m_ballArray[0].SetColour(glm::vec4(1, 0.2f, 0, 1));
+	m_ballArray[1].SetColour(glm::vec4(1, 0.2f, 0, 1));
 	//----------------------------------------------------------------------------
 }
 
@@ -191,8 +184,6 @@ void PlayState::BallAABBCollision()
 {
 	for (unsigned int itrBall = 0; itrBall < m_ballArray.size(); itrBall++)
 	{
-		m_ballArray[itrBall].SetColour(glm::vec4(0.5f, 1.0f, 0.5f, 1));
-
 		for (unsigned int itrWall = 0; itrWall < m_walls.size(); itrWall++)
 		{
 			bool colliding = false;
@@ -317,7 +308,6 @@ void PlayState::BallAABBCollision()
 				continue;
 			}
 
-			m_ballArray[itrBall].SetColour(glm::vec4(1.0f, 0.5f, 0.5f, 1));
 			m_ballArray[itrBall].SetPosition((m_ballArray[itrBall].GetTransform()[3].xyz + collisionNormal * fIntersectDist));
 
 			glm::vec3 forceVec = -1 * m_ballArray[itrBall].GetMass() * collisionNormal * (glm::dot(collisionNormal, m_ballArray[itrBall].GetVelocity()));
@@ -329,7 +319,7 @@ void PlayState::BallAABBCollision()
 void PlayState::Spring()
 {
 	glm::vec3 direction = m_ballArray[0].GetTransform()[3].xyz - m_ballArray[1].GetTransform()[3].xyz;
-	float springCoeficient = 1;
+	float springCoeficient = 10;
 	direction *= -springCoeficient;
 
 	m_ballArray[0].ApplyForce(direction);

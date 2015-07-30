@@ -20,6 +20,7 @@ public:
 	glm::vec3 GetNormal(){ return m_normal; }
 
 	float GetBounce(){ return m_bounce; }
+	void SetBounce(float _bounce){ m_bounce = _bounce; }
 
 private:
 	glm::mat4 m_transform;

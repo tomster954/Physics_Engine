@@ -25,12 +25,14 @@ public:
 	glm::vec3 GetVelocity(){ return m_velocity; }
 	float GetRadius(){ return m_radius; }
 	float GetMass(){ return m_mass; }
+	glm::vec4 GetColour() { return m_colour; }
 
 	//Setters
 	void SetVelocity(glm::vec3 _velocity){ m_velocity = _velocity; }
 	void SetPosition(glm::vec3 _position){ m_transform[3].xyz = _position; }
 	void SetMass(float _mass){ m_mass = _mass; }
 	void SetColour(glm::vec4 _colour)  { m_colour = _colour; }
+	void SetDrag(float _drag)  { m_drag = _drag; }
 
 	//Add
 	void ApplyForce(glm::vec3 _forceVector){ m_velocity += _forceVector / m_mass; }
