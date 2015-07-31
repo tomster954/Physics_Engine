@@ -11,6 +11,7 @@
 #include "ParticleFluidEmitter.h"
 #include "AddWidget.h"
 #include "PlayerController.h"
+#include "TriggerVolume.h"
 struct GLFWwindow;
 
 #include <PxPhysicsAPI.h>
@@ -60,6 +61,7 @@ private:
 
 	AddWidget *m_addWidget;
 	PlayerController *m_playerController;
+	TriggerVolume* m_triggerVolume;
 };
 
 #endif

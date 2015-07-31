@@ -73,6 +73,8 @@ void PlayerController::Update(float _dt)
 		velocity.x += movementSpeed * _dt;
 	if (glfwGetKey(m_pWindow, GLFW_KEY_RIGHT) == GLFW_PRESS)
 		velocity.x -= movementSpeed * _dt;
+	if (glfwGetKey(m_pWindow, GLFW_KEY_SPACE) == GLFW_PRESS && onGround)
+		velocity.y += movementSpeed * 10 *_dt;
 
 	//To do.. add code to control z movement and jumping
 	float minDistance = 0.001f;

@@ -91,6 +91,8 @@ void PhysXState::SetUpPhysX()
 	
 	m_ragdoll = new Ragdoll(g_Physics, g_PhysicsMaterial, g_PhysicsScene);
 	m_playerController = new PlayerController(g_PhysicsMaterial, g_PhysicsScene, glm::vec3(0, 10, -10), m_pWindow);
+
+	
 	Reset();
 }
 
@@ -109,14 +111,19 @@ void PhysXState::Update(float _dt)
 		//dont need to do anythig here yet but have to fetch results
 	}
 
-	if (m_particleEmitter)
-	{
-		m_particleEmitter->update(_dt);
-		//render all our particles
-		m_particleEmitter->renderParticles();
-	}
+	
 
 	m_playerController->Update(_dt);
+	
+	if (m_triggerVolume->m_triggered)
+	{
+		if (m_particleEmitter)
+		{
+			m_particleEmitter->update(_dt);
+			//render all our particles
+			m_particleEmitter->renderParticles();
+		}
+	}
 }
 
 void PhysXState::Draw(Camera *_camera)
@@ -140,6 +147,8 @@ void PhysXState::Draw(Camera *_camera)
 
 		delete[] shapes;
 	}
+
+	m_triggerVolume->Draw();
 
 	Gizmos::draw(_camera->getProjectionView());
 }
@@ -220,6 +229,17 @@ void PhysXState::CreateBoxes()
 	boxWall = PxCreateStatic(*g_Physics, pose, side2, *g_PhysicsMaterial);
 	g_PhysicsScene->addActor(*boxWall);
 	g_PhysXActors.push_back(boxWall);
+	//------------------------------------
+	
+	//Making the collision box thing :(
+	pose = PxTransform(PxVec3(5, 5, 5));
+	PxRigidStatic* collisionBox = PxCreateStatic(*g_Physics, PxTransform(physx::PxVec3(0, 0, -30)), PxBoxGeometry(0.05f, 0.05f, 0.05f), *g_PhysicsMaterial);
+
+	g_PhysicsScene->addActor(*collisionBox);
+	g_PhysXActors.push_back(collisionBox);
+
+	PxShape* newShape = g_Physics->createShape(PxBoxGeometry(5, 5, 5), *g_PhysicsMaterial);
+	m_triggerVolume = new TriggerVolume(g_PhysicsScene, collisionBox, newShape);
 	//------------------------------------
 }
 

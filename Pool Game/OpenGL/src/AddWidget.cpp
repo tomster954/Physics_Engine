@@ -71,10 +71,18 @@ void AddWidget::AddBox(PxShape* pShape, PxRigidActor* actor)
 	glm::vec4 colour = glm::vec4(1, 0, 0, 1);
 
 	if (actor->getName() != NULL && strcmp(actor->getName(), "Pickup1")) //seriously horrid hack so I can show pickups a different colour
-		colour = glm::vec4(0, 1, 0, 1);
+		colour = glm::vec4(0, 0, 1, 1);
 
 	//create our box gizmo
-	Gizmos::addAABBFilled(position, extents, colour, &M);
+	PxShapeFlags flag = pShape->getFlags();
+	if (flag.isSet(PxShapeFlag::eTRIGGER_SHAPE)) 
+	{
+		Gizmos::addAABBFilled(position, extents, glm::vec4(0), &M);
+	}
+	else 
+	{
+		Gizmos::addAABBFilled(position, extents, colour, &M);
+	}
 }
 
 void AddWidget::AddSphere(PxShape* pShape, PxRigidActor* actor)

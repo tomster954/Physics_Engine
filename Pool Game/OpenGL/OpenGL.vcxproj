@@ -103,6 +103,7 @@
     <ClCompile Include="src\Main.cpp" />
     <ClCompile Include="src\Ragdoll.cpp" />
     <ClCompile Include="src\Table.cpp" />
+    <ClCompile Include="src\TriggerVolume.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="dep\aieutilities\Gizmos.h" />
@@ -124,6 +125,7 @@
     <ClInclude Include="inc\PlayState.h" />
     <ClInclude Include="inc\Ragdoll.h" />
     <ClInclude Include="inc\Table.h" />
+    <ClInclude Include="inc\TriggerVolume.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
