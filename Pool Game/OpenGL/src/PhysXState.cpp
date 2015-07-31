@@ -49,6 +49,8 @@ PhysXState::~PhysXState()
 	g_PhysicsScene->release();
 	g_Physics->release();
 	g_PhysicsFoundation->release();
+	delete m_ragdoll;
+	delete m_playerController;
 }
 
 void PhysXState::Reset()
@@ -86,10 +88,10 @@ void PhysXState::SetUpPhysX()
 	
 	g_PhysicsScene = g_Physics->createScene(sceneDesc);
 	SetUpVisualDebugger();
-	Reset();
-
+	
 	m_ragdoll = new Ragdoll(g_Physics, g_PhysicsMaterial, g_PhysicsScene);
-	m_ragdoll->SetPosition(glm::vec3(50));
+	m_playerController = new PlayerController(g_PhysicsMaterial, g_PhysicsScene, glm::vec3(0, 10, -10), m_pWindow);
+	Reset();
 }
 
 void PhysXState::Update(float _dt)
@@ -113,13 +115,17 @@ void PhysXState::Update(float _dt)
 		//render all our particles
 		m_particleEmitter->renderParticles();
 	}
+
+	m_playerController->Update(_dt);
 }
+
 void PhysXState::Draw(Camera *_camera)
 {
 	glm::vec4 colour;
 	colour = glm::vec4(1.0f, 0.0f, 0.0f, 1.0f);
 
 	m_ragdoll->Draw();
+	m_playerController->Draw();
 
 	// Add widgets to represent all the phsyX actors which are in the scene
 	for (auto actor : g_PhysXActors)
@@ -162,22 +168,22 @@ void PhysXState::SetUpVisualDebugger()
 void PhysXState::CreateBoxes()
 {
 	//Box vars
-	float density = 100;
-	PxBoxGeometry box(0.5f, 0.5f, 0.5f);
+	float density = 1;
+	PxBoxGeometry box(1.0f , 1.0f, 1.0f);
 	PxTransform transform(PxVec3(0, 1, 0));
 	PxRigidDynamic* dynamicActor;
 
 	float boxes = 10;
-	float rnd;
-
+	float rndX, rndZ;
 	//falling boxes
 	for (int i = 0; i < boxes; i++)
 	{
-		rnd = (float)(rand() % 50);
+		rndX = (float)(rand() % 50);
+		rndZ = (float)(rand() % 50);
 
 		transform.p.y = transform.p.y + 1;
-		transform.p.x = (rnd - 25.0f) / 10.0f;
-		transform.p.z = (rnd - 25.0f) / 10.0f;
+		transform.p.x = (rndX - 25.0f) / 10.0f;
+		transform.p.z = (rndZ - 25.0f) / 10.0f;
 
 		dynamicActor = PxCreateDynamic(*g_Physics, transform, box, *g_PhysicsMaterial, density);
 		
@@ -186,12 +192,11 @@ void PhysXState::CreateBoxes()
 		g_PhysXActors.push_back(dynamicActor);
 	}
 
+	//Walls
 	PxTransform pose = PxTransform(PxVec3(0.0f, 0, 0.0f), PxQuat(PxHalfPi, PxVec3(0.0f, 0.0f, 1.0f)));
-
-	float yExtent = 5;
+	float yExtent = 1;
 	float longSide = 10;
 	float thinSide = 1;
-
 	PxBoxGeometry side1(longSide, yExtent, thinSide);
 	PxBoxGeometry side2(thinSide, yExtent, longSide);
 
@@ -215,6 +220,7 @@ void PhysXState::CreateBoxes()
 	boxWall = PxCreateStatic(*g_Physics, pose, side2, *g_PhysicsMaterial);
 	g_PhysicsScene->addActor(*boxWall);
 	g_PhysXActors.push_back(boxWall);
+	//------------------------------------
 }
 
 void PhysXState::InitParticles()
@@ -223,7 +229,7 @@ void PhysXState::InitParticles()
 	PxParticleFluid* pf;
 	// create particle system in PhysX SDK
 	// set immutable properties.
-	PxU32 maxParticles = 2000;
+	PxU32 maxParticles = 500;
 	bool perParticleRestOffset = false;
 
 	pf = g_Physics->createParticleFluid(maxParticles, perParticleRestOffset);
@@ -242,6 +248,6 @@ void PhysXState::InitParticles()
 		m_particleEmitter = new ParticleFluidEmitter(maxParticles, PxVec3(0, 10, 0), pf, 0.05f);
 		m_particleEmitter->setStartVelocityRange(-10.0f, 0, -10.0f, 10.0f, 0, 10.0f);
 		m_particleEmitter->setSize(glm::vec3(0.5f, 0.5f, 0.5f));
-		m_particleEmitter->setColour(glm::vec4(1, 0, 0, 1));
+		m_particleEmitter->setColour(glm::vec4(0, 0, 0.9f, 1));
 	}
 }

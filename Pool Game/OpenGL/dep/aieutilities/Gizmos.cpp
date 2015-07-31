@@ -240,7 +240,8 @@ void Gizmos::addAABB(const glm::vec3& a_center,
 void Gizmos::addAABBFilled(const glm::vec3& a_center,
 	const glm::vec3& a_rvExtents,
 	const glm::vec4& a_fillColour,
-	const glm::mat4* a_transform /* = nullptr */)
+	const glm::mat4* a_transform /* = nullptr */,
+	const bool a_lines /* = true */)
 {
 	glm::vec3 vVerts[8];
 	glm::vec3 vX(a_rvExtents.x, 0, 0);
@@ -268,21 +269,22 @@ void Gizmos::addAABBFilled(const glm::vec3& a_center,
 
 	glm::vec4 vWhite(1, 1, 1, 1);
 
-	addLine(vVerts[0], vVerts[1], vWhite, vWhite);
-	addLine(vVerts[1], vVerts[2], vWhite, vWhite);
-	addLine(vVerts[2], vVerts[3], vWhite, vWhite);
-	addLine(vVerts[3], vVerts[0], vWhite, vWhite);
+	if (a_lines) {
+		addLine(vVerts[0], vVerts[1], vWhite, vWhite);
+		addLine(vVerts[1], vVerts[2], vWhite, vWhite);
+		addLine(vVerts[2], vVerts[3], vWhite, vWhite);
+		addLine(vVerts[3], vVerts[0], vWhite, vWhite);
 
-	addLine(vVerts[4], vVerts[5], vWhite, vWhite);
-	addLine(vVerts[5], vVerts[6], vWhite, vWhite);
-	addLine(vVerts[6], vVerts[7], vWhite, vWhite);
-	addLine(vVerts[7], vVerts[4], vWhite, vWhite);
+		addLine(vVerts[4], vVerts[5], vWhite, vWhite);
+		addLine(vVerts[5], vVerts[6], vWhite, vWhite);
+		addLine(vVerts[6], vVerts[7], vWhite, vWhite);
+		addLine(vVerts[7], vVerts[4], vWhite, vWhite);
 
-	addLine(vVerts[0], vVerts[4], vWhite, vWhite);
-	addLine(vVerts[1], vVerts[5], vWhite, vWhite);
-	addLine(vVerts[2], vVerts[6], vWhite, vWhite);
-	addLine(vVerts[3], vVerts[7], vWhite, vWhite);
-
+		addLine(vVerts[0], vVerts[4], vWhite, vWhite);
+		addLine(vVerts[1], vVerts[5], vWhite, vWhite);
+		addLine(vVerts[2], vVerts[6], vWhite, vWhite);
+		addLine(vVerts[3], vVerts[7], vWhite, vWhite);
+	}
 	// top
 	addTri(vVerts[2], vVerts[1], vVerts[0], a_fillColour);
 	addTri(vVerts[3], vVerts[2], vVerts[0], a_fillColour);

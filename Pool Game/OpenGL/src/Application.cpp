@@ -14,7 +14,7 @@ Application::Application(glm::vec4 _backgroundColour)
 
 	m_camera = new Camera(3.14159f * 0.25f, 4.0f / 3.0f, 0.01f, 100);
 	m_camera->setSpeed(100);
-	m_camera->setLookAtFrom(glm::vec3(0, 50, -100), glm::vec3(0, 0, 0));
+	m_camera->setLookAtFrom(glm::vec3(0, 50, -80), glm::vec3(0, 0, 0));
 
 	if (m_pWindow == nullptr) 
 	{
@@ -51,6 +51,10 @@ Application::Application(glm::vec4 _backgroundColour)
 //Destructor
 Application::~Application()
 {
+	delete m_playState;
+	delete m_physXState;
+	delete m_camera;
+
 	glfwDestroyWindow(m_pWindow);
 	glfwTerminate();
 }

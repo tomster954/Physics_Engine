@@ -25,7 +25,7 @@ Ragdoll::Ragdoll(PxPhysics* _physics, PxMaterial* _material, PxScene* _scene)
 		NULL
 	};
 
-	m_body = Ragdoll::MakeRagdoll(_physics, ragdollData, PxTransform(PxVec3(0, 20, -50)), .1f, _material);
+	m_body = Ragdoll::MakeRagdoll(_physics, ragdollData, PxTransform(PxVec3(0, 10, -20)), .1f, _material);
 	_scene->addArticulation(*m_body);
 }
 

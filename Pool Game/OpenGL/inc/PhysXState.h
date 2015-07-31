@@ -10,6 +10,7 @@
 #include "Ragdoll.h"
 #include "ParticleFluidEmitter.h"
 #include "AddWidget.h"
+#include "PlayerController.h"
 struct GLFWwindow;
 
 #include <PxPhysicsAPI.h>
@@ -58,6 +59,7 @@ private:
 	ParticleFluidEmitter *m_particleEmitter;
 
 	AddWidget *m_addWidget;
+	PlayerController *m_playerController;
 };
 
 #endif

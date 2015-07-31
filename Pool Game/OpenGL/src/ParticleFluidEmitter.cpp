@@ -188,7 +188,7 @@ void ParticleFluidEmitter::renderParticles()
 				//we can use this to decide if the particle is seperate or part of a larger body of fluid
 				glm::vec3 pos(positionIt->x,positionIt->y,positionIt->z);
 				
-				Gizmos::addAABBFilled(pos, m_size, glm::vec4(1,0,1,1));
+				Gizmos::addAABBFilled(pos, m_size, m_colour, nullptr, false);
 			}
 		}
 		// return ownership of the buffers back to the SDK
