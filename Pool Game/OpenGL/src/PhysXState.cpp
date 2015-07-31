@@ -37,6 +37,9 @@ m_project(	1, 0, 0, 1,
 			0, 0, 0, 1)
 {
 	m_pWindow = _pWindow;
+
+	m_addWidget = new AddWidget();
+
 	SetUpPhysX();
 	InitParticles();
 }
@@ -98,19 +101,25 @@ void PhysXState::Update(float _dt)
 
 	g_PhysicsScene->simulate(_dt);
 
-	
+
 	while (g_PhysicsScene->fetchResults() == false)
 	{
 		//dont need to do anythig here yet but have to fetch results
 	}
-	
+
 	if (m_particleEmitter)
 	{
 		m_particleEmitter->update(_dt);
 		//render all our particles
 		m_particleEmitter->renderParticles();
 	}
+}
+void PhysXState::Draw(Camera *_camera)
+{
+	glm::vec4 colour;
+	colour = glm::vec4(1.0f, 0.0f, 0.0f, 1.0f);
 
+	m_ragdoll->Draw();
 
 	// Add widgets to represent all the phsyX actors which are in the scene
 	for (auto actor : g_PhysXActors)
@@ -118,21 +127,13 @@ void PhysXState::Update(float _dt)
 		PxU32 nShapes = actor->getNbShapes();
 		PxShape** shapes = new PxShape*[nShapes];
 		actor->getShapes(shapes, nShapes);
-		
+
 		// Render all the shapes in the physx actor (for early tutorials there is just one)
 		while (nShapes--)
-			AddWidget(shapes[nShapes], actor);
+			m_addWidget->AddWidgetFunc(shapes[nShapes], actor);
 
 		delete[] shapes;
 	}
-}
-
-void PhysXState::Draw(Camera *_camera)
-{
-	glm::vec4 colour;
-	colour = glm::vec4(1.0f, 0.0f, 0.0f, 1.0f);
-
-	m_ragdoll->Draw();
 
 	Gizmos::draw(_camera->getProjectionView());
 }
@@ -156,77 +157,6 @@ void PhysXState::SetUpVisualDebugger()
 	
 	// and now try to connectPxVisualDebuggerExt
 	auto theConnection = PxVisualDebuggerExt::createConnection(g_Physics->getPvdConnectionManager(), pvd_host_ip, port, timeout, connectionFlags);
-}
-
-void PhysXState::AddWidget(PxShape* shape, PxRigidActor* actor)
-{
-	PxGeometryType::Enum type = shape->getGeometryType();
-	switch (type)
-	{
-	case PxGeometryType::eBOX:
-		AddBox(shape, actor);
-		break;
-	case PxGeometryType::ePLANE:
-		AddPlane(shape, actor);
-		break;
-	}
-}
-
-void PhysXState::AddBox(PxShape* pShape, PxRigidActor* actor)
-{
-	//get the geometry for this PhysX collision volume
-	PxBoxGeometry geometry;
-	float width = 1, height = 1, length = 1;
-	bool status = pShape->getBoxGeometry(geometry);
-	if (status)
-	{
-		width = geometry.halfExtents.x;
-		height = geometry.halfExtents.y;
-		length = geometry.halfExtents.z;
-	}
-	//get the transform for this PhysX collision volume
-	PxMat44 m(PxShapeExt::getGlobalPose(*pShape, *actor));
-	glm::mat4 M(m.column0.x, m.column0.y, m.column0.z, m.column0.w,
-				m.column1.x, m.column1.y, m.column1.z, m.column1.w,
-				m.column2.x, m.column2.y, m.column2.z, m.column2.w,
-				m.column3.x, m.column3.y, m.column3.z, m.column3.w);
-	
-	glm::vec3 position;
-	//get the position out of the transform
-	position.x = m.getPosition().x;
-	position.y = m.getPosition().y;
-	position.z = m.getPosition().z;
-	
-	glm::vec3 extents = glm::vec3(width, height, length);
-	glm::vec4 colour = glm::vec4(1, 0, 0, 1);
-	
-	if (actor->getName() != NULL && strcmp(actor->getName(), "Pickup1")) //seriously horrid hack so I can show pickups a different colour
-		colour = glm::vec4(0, 1, 0, 1);
-	
-	//create our box gizmo
-	Gizmos::addAABBFilled(position, extents, colour, &M);
-}
-
-void PhysXState::AddPlane(PxShape* pShape, PxRigidActor* actor)
-{
-	//get the geometry for this PhysX collision volume
-	PxBoxGeometry geometry;
-	float width = 1000, height = 0, length = 1000;
-
-	//get the transform for this PhysX collision volume
-	PxMat44 m(PxShapeExt::getGlobalPose(*pShape, *actor));
-	
-	glm::vec3 position;
-	//get the position out of the transform
-	position.x = m.getPosition().x;
-	position.y = m.getPosition().y;
-	position.z = m.getPosition().z;
-
-	glm::vec3 extents = glm::vec3(width, height, length);
-	glm::vec4 colour = glm::vec4(1, 0.8f, 0.5f, 1);
-
-	//create our box gizmo
-	Gizmos::addAABBFilled(position, extents, colour);
 }
 
 void PhysXState::CreateBoxes()

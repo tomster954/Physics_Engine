@@ -9,6 +9,7 @@
 #include "Camera.h"
 #include "Ragdoll.h"
 #include "ParticleFluidEmitter.h"
+#include "AddWidget.h"
 struct GLFWwindow;
 
 #include <PxPhysicsAPI.h>
@@ -35,10 +36,6 @@ public:
 	void SetUpVisualDebugger();
 	void InitParticles();
 
-	void AddWidget(PxShape* shape, PxRigidActor* actor);
-	void AddBox(PxShape* pShape, PxRigidActor* actor);
-	void AddPlane(PxShape* pShape, PxRigidActor* actor);
-
 private:
 	GLFWwindow *m_pWindow;
 	glm::mat4 m_project;
@@ -60,6 +57,7 @@ private:
 
 	ParticleFluidEmitter *m_particleEmitter;
 
+	AddWidget *m_addWidget;
 };
 
 #endif

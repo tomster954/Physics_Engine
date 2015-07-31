@@ -6,6 +6,8 @@
 #ifndef RAGDOLL
 #define RAGDOLL
 
+#include "AddWidget.h"
+
 #include "glm/ext.hpp"
 #include <PxPhysicsAPI.h>
 #include <PxScene.h>
@@ -70,11 +72,6 @@ public:
 
 	PxArticulation* MakeRagdoll(PxPhysics* g_Physics, RagdollNode** nodeArray, PxTransform worldPos, float scaleFactor, PxMaterial* ragdollMaterial);
 
-	void AddWidget(PxShape* shape, PxRigidActor* actor);
-	void AddSphere(PxShape* shape, PxRigidActor* actor);
-	void AddCapsule(PxShape* shape, PxRigidActor* actor);
-
-
 private:
 	const PxVec3 X_AXIS = PxVec3(1, 0, 0);
 	const PxVec3 Y_AXIS = PxVec3(0, 1, 0);
@@ -82,5 +79,7 @@ private:
 	PxArticulation* m_body;
 
 	glm::vec3 m_position;
+
+	AddWidget *m_addWidget;
 };
 #endif

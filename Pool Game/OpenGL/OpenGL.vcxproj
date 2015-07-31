@@ -85,6 +85,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="dep\aieutilities\Gizmos.cpp" />
+    <ClCompile Include="src\AddWidget.cpp" />
     <ClCompile Include="src\Application.cpp" />
     <ClCompile Include="src\Ball.cpp" />
     <ClCompile Include="src\Box.cpp" />
@@ -104,6 +105,7 @@
   <ItemGroup>
     <ClInclude Include="dep\aieutilities\Gizmos.h" />
     <ClInclude Include="dep\glfw\include\GLFW\glfw3.h" />
+    <ClInclude Include="inc\AddWidget.h" />
     <ClInclude Include="inc\Application.h" />
     <ClInclude Include="inc\Ball.h" />
     <ClInclude Include="inc\Box.h" />
