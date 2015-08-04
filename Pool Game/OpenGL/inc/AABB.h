@@ -19,7 +19,6 @@ public:
 	void Draw(Camera *_pCamera);
 	
 	void SetSize(glm::vec3 _size){ m_size = _size; }
-	void SetMass(float _mass){ m_mass = _mass; }
 	void SetPosition(glm::vec3 _pos) { m_transform[3].xyz = _pos; }
 	void SetColour(glm::vec4 _colour) { m_colour = _colour; }
 
@@ -27,7 +26,6 @@ public:
 	glm::mat4 GetTransform() { return m_transform; }
 	glm::vec3 GetExtents() { return m_size / 2.0f; }
 private:
-	float m_mass;
 
 	float m_width;
 	float m_height;
@@ -38,7 +36,6 @@ private:
 	
 	glm::vec4 m_colour;
 	glm::mat4 m_transform;
-	glm::vec3 m_velocity;
 	glm::vec3 m_size;
 
 };

@@ -68,7 +68,6 @@ void PlayState::ResetGame()
 	//sets the walls height and mass
 	for (unsigned int i = 0; i < m_walls.size(); i++)
 	{
-		m_walls[i].SetMass(100000);
 		m_walls[i].SetSize(glm::vec3(0, 30, 0));
 		m_walls[i].SetColour(glm::vec4(0.5f, 1, 0.5f, 1));
 	}

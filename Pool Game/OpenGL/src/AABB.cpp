@@ -1,9 +1,8 @@
-#include "Box.h"
+#include "AABB.h"
 
 #include "Gizmos.h"
 
 Box::Box() :
-	m_mass(10.0f),
 	m_width(10.0f),
 	m_height(10.0f),
 	m_depth(10.0f),
@@ -11,8 +10,7 @@ Box::Box() :
 	m_transform(1, 0, 0, 1,
 				0, 1, 0, 1,
 				0, 0, 1, 1,
-				0, 0, 0, 1),
-	m_velocity(0,0,0)
+				0, 0, 0, 1)
 {
 	
 }

@@ -6,7 +6,7 @@
 #ifndef TABLE
 #define TABLE
 
-#include "Box.h"
+#include "AABB.h"
 #include "Plane.h"
 #include "Camera.h"
 

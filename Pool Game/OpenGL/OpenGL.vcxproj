@@ -89,7 +89,7 @@
     <ClCompile Include="src\AddWidget.cpp" />
     <ClCompile Include="src\Application.cpp" />
     <ClCompile Include="src\Ball.cpp" />
-    <ClCompile Include="src\Box.cpp" />
+    <ClCompile Include="src\AABB.cpp" />
     <ClCompile Include="src\MyControllerHitReport.cpp" />
     <ClCompile Include="src\Networking.cpp" />
     <ClCompile Include="src\ParticleEmitter.cpp" />
@@ -112,7 +112,7 @@
     <ClInclude Include="inc\AddWidget.h" />
     <ClInclude Include="inc\Application.h" />
     <ClInclude Include="inc\Ball.h" />
-    <ClInclude Include="inc\Box.h" />
+    <ClInclude Include="inc\AABB.h" />
     <ClInclude Include="inc\Camera.h" />
     <ClInclude Include="inc\gl_core_4_4.h" />
     <ClInclude Include="inc\GUI_Bar.h" />
